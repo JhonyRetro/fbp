@@ -5,17 +5,14 @@ MOVEMENT_REGEX = re.compile(r'(\w)(-?\d+\.\d+)')
 
 
 def main():
-    if len(sys.argv) < 4:
-        print("Uso: rounder.py <in_file> <out_file> <precision>")
+    if len(sys.argv) < 3:
+        print("Uso: rounder.py <in_file> <out_file>")
         sys.exit(1)
 
     in_file = sys.argv[1]
     out_file = sys.argv[2]
 
-    try:
-        precision = int(sys.argv[3])
-    except ValueError:
-        precision = 6
+    precision = 4
 
     counts = {'converted': 0, 'maintained': 0, 'removed_f': 0}
     output = []
