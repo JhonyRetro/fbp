@@ -13,7 +13,7 @@ Antes de realizar cualquier operación, deberemos procesar nuestro G-Code genera
 
 ```
 uv sync
-uv run ./external/rounder.py <gcode entrada> <fich. salida> <decimales>
+uv run ./external/rounder.py <gcode entrada> <fich. salida>
 ```
 
 Este código filtrado, lo codificaremos en paquetes binarios de 6 Bytes, que serán comunicados mediante UART a la FPGA para ser leídos y poder generar los pulsos correspondientes. La estructura de los paquetes binarios es la siguiente:
