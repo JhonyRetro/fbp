@@ -1,4 +1,4 @@
-(Decimal precision updated by gcode rounder - FBP | JhonyRetro
+Decimal precision updated by gcode rounder - FBP | JhonyRetro
 G21
 G90;svg > path
 G0 Z1;

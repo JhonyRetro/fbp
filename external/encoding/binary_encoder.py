@@ -2,7 +2,7 @@ import serial
 import time
 import re
 
-GCODE_FILE = 'examples/out/smiley.gcode'
+GCODE_FILE = 'rounder/examples/out/smiley.gcode'
 PUERTO_SERIE = ''
 BAUD_RATE = 115200
 STEPS_PER_MM = 80
