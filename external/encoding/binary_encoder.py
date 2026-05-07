@@ -1,18 +1,19 @@
 import serial
+import sys
 import time
 import re
 
-GCODE_FILE = 'rounder/examples/out/smiley.gcode'
-PUERTO_SERIE = ''
+GCODE_FILE = sys.argv[1]
+PUERTO_SERIE = '' # Sustituir por puerto donde esté conectada la FPGA
 BAUD_RATE = 115200
-STEPS_PER_MM = 80
+STEPS_PER_MM = 80 # sustituir dependiendo de los uSteps del driver
 SIM = True
 
 normalize = True
 # Medidas en mm
 max_width = 297
 max_height = 210
-top_margin = 25.4
+top_margin = 25.4 # 1"
 bottom_margin = 25.4
 left_margin = 25.4
 right_margin = 25.4
@@ -73,6 +74,10 @@ def pack_gcode_line(dx_steps, dy_steps, pen_down, plot_end):
 
 
 def parse_gcode():
+    if len(sys.argv) < 2:
+        print("Uso: binary_encoder.py <GCODE_FILE>")
+        sys.exit(1)
+
     ser = None
     if not SIM:
         try:
@@ -143,14 +148,14 @@ def parse_gcode():
                     dy_steps = target_step_y - current_step_y
 
                     if dx_steps != 0 or dy_steps != 0 or pen_change:
-                        paquete = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
+                        packet = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
 
                         if SIM:
-                            hex_str = ' '.join([f"{b:02X}" for b in paquete])
-                            print(
-                                f"Comando: {line} | Bytes: [{hex_str}] | Pasos a dar: X={dx_steps}, Y={dy_steps}")
+                            hex_str = ' '.join([f"{b:02X}" for b in packet])
+                            print(#hex_str)
+                                f"Comando: {line} | Bytes: [{hex_str}] | Pasos a dar: X={dx_steps}, Y={dy_steps} | Lápiz: {pen_state} | Fin: {plot_end}")
                         else:
-                            ser.write(paquete)
+                            ser.write(packet)
                             time.sleep(0.01)
 
                         sent_lines += 1
@@ -160,10 +165,9 @@ def parse_gcode():
 
             plot_end = 1
             end_packet = pack_gcode_line(0, 0, pen_state, plot_end)
-            if SIM:
-                hex_str = ' '.join([f"{b:02X}" for b in end_packet])
-                print(f"Comando: FIN DE ARCHIVO           | Bytes: [{hex_str}] | Lápiz: {pen_state} | Fin: 1")
-            else:
+            hex_str = ' '.join([f"{b:02X}" for b in end_packet])
+            print(f"Comando: FIN DE ARCHIVO (M2)  | Bytes: [{hex_str}] | Lápiz: {pen_state} | Fin: {plot_end}")
+            if not SIM:
                 ser.write(end_packet)
 
     except FileNotFoundError:
