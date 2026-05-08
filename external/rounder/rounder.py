@@ -1,12 +1,3 @@
-# Usage:
-#
-#   IN=/path/to/file OUT=/path/to/file PRECISION=(0...n) python ./round.py
-#
-# IN        : (required) Path to input file
-# OUT       : (optional) Path to output file (leave off to overwrite original)
-# PRECISION : (optional) Number of digits after the decimal to keep (default 6)
-
-import os
 import re
 import sys
 
@@ -14,17 +5,14 @@ MOVEMENT_REGEX = re.compile(r'(\w)(-?\d+\.\d+)')
 
 
 def main():
-    in_file = os.environ.get('IN')
-    if not in_file:
-        print("Error: La variable de entorno 'IN' es obligatoria.")
+    if len(sys.argv) < 3:
+        print("Uso: rounder.py <in_file> <out_file>")
         sys.exit(1)
 
-    out_file = os.environ.get('OUT') or in_file
+    in_file = sys.argv[1]
+    out_file = sys.argv[2]
 
-    try:
-        precision = int(os.environ.get('PRECISION', 6))
-    except ValueError:
-        precision = 6
+    precision = 4
 
     counts = {'converted': 0, 'maintained': 0, 'removed_f': 0}
     output = []
@@ -63,7 +51,7 @@ def main():
         output.append(' '.join(new_commands).rstrip())
 
     with open(out_file, 'w', encoding='utf-8') as f:
-        f.write(f"(Decimal precision updated by gcode rounder - FBP | JhonyRetro\n")
+        f.write(f"Decimal precision updated by gcode rounder - FBP | JhonyRetro\n")
         f.write('\n'.join(output) + '\n')
 
     print("done!\n")
