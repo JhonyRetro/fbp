@@ -9,10 +9,10 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
  
 ## Switches
-#set_property PACKAGE_PIN V17 [get_ports {sw[0]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[0]}]
-#set_property PACKAGE_PIN V16 [get_ports {sw[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
+set_property PACKAGE_PIN V17 [get_ports {sw_enable_x}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {sw_enable_x}]
+set_property PACKAGE_PIN V16 [get_ports {sw_enable_y}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {sw_enable_y}]
 #set_property PACKAGE_PIN W16 [get_ports {sw[2]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
 #set_property PACKAGE_PIN W17 [get_ports {sw[3]}]					
@@ -74,8 +74,8 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	#set_property IOSTANDARD LVCMOS33 [get_ports {led[13]}]
 #set_property PACKAGE_PIN P1 [get_ports {led[14]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {led[14]}]
-#set_property PACKAGE_PIN L1 [get_ports {led[15]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {led[15]}]
+set_property PACKAGE_PIN L1 [get_ports {led_done}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {led_done}]
 	
 	
 ##7 segment display
@@ -122,18 +122,18 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 
 
 ##Pmod Header JA
-##Sch name = JA1
-#set_property PACKAGE_PIN J1 [get_ports {JA[0]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA[0]}]
-##Sch name = JA2
-#set_property PACKAGE_PIN L2 [get_ports {JA[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA[1]}]
-##Sch name = JA3
-#set_property PACKAGE_PIN J2 [get_ports {JA[2]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA[2]}]
-##Sch name = JA4
-#set_property PACKAGE_PIN G2 [get_ports {JA[3]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA[3]}]
+#Sch name = JA1
+set_property PACKAGE_PIN J1 [get_ports {step_x}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {step_x}]
+#Sch name = JA2
+set_property PACKAGE_PIN L2 [get_ports {dir_x}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {dir_x}]
+#Sch name = JA3
+set_property PACKAGE_PIN J2 [get_ports {step_y}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {step_y}]
+#Sch name = JA4
+set_property PACKAGE_PIN G2 [get_ports {dir_y}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {dir_y}]
 ##Sch name = JA7
 #set_property PACKAGE_PIN H1 [get_ports {JA[4]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JA[4]}]
@@ -150,21 +150,21 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 
 
 ##Pmod Header JB
-##Sch name = JB1
-#set_property PACKAGE_PIN A14 [get_ports {JB[0]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[0]}]
-##Sch name = JB2
-#set_property PACKAGE_PIN A16 [get_ports {JB[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[1]}]
-##Sch name = JB3
-#set_property PACKAGE_PIN B15 [get_ports {JB[2]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[2]}]
-##Sch name = JB4
-#set_property PACKAGE_PIN B16 [get_ports {JB[3]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[3]}]
-##Sch name = JB7
-#set_property PACKAGE_PIN A15 [get_ports {JB[4]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[4]}]
+#Sch name = JB1
+set_property PACKAGE_PIN A14 [get_ports {limit_x}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {limit_x}]
+#Sch name = JB2
+set_property PACKAGE_PIN A16 [get_ports {limit_x}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {limit_y}]
+#Sch name = JB3
+set_property PACKAGE_PIN B15 [get_ports {en_x_out}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {en_x_out}]
+#Sch name = JB4
+set_property PACKAGE_PIN B16 [get_ports {en_y_out}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {en_y_out}]
+#Sch name = JB7
+set_property PACKAGE_PIN A15 [get_ports {servo_pwm}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {servo_pwm}]
 ##Sch name = JB8
 #set_property PACKAGE_PIN A17 [get_ports {JB[5]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[5]}]
@@ -264,10 +264,10 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 
 
 ##USB-RS232 Interface
-set_property PACKAGE_PIN B18 [get_ports RsRx]						
-	set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
-set_property PACKAGE_PIN A18 [get_ports RsTx]						
-	set_property IOSTANDARD LVCMOS33 [get_ports RsTx]
+set_property PACKAGE_PIN B18 [get_ports rx]						
+	set_property IOSTANDARD LVCMOS33 [get_ports rx]
+#set_property PACKAGE_PIN A18 [get_ports RsTx]						
+#	set_property IOSTANDARD LVCMOS33 [get_ports RsTx]
 
 
 ##USB HID (PS/2)
