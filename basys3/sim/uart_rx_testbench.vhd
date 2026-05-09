@@ -23,7 +23,7 @@ architecture sim of uart_rx_tb is
     signal rx_done_tick_tb : std_logic;
 
     constant CLK_PERIOD : time := 10 ns;     -- 100 MHz
-    constant BIT_PERIOD : time := 8680 ns;   -- 1/115200 bauds = ~8.68 us
+    constant BIT_PERIOD : time := 8680 ns;   -- 1/115200 baudios = ~8.68 us
 
 begin
     UUT: uart_rx 
