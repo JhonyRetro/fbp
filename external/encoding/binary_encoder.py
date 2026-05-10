@@ -64,7 +64,7 @@ def get_boundaries(file):
 
 
 def pack_gcode_line(dx_steps, dy_steps, pen_down, plot_end):
-    packet = []
+    packets = []
 
     dir_x = 1 if dx_steps >= 0 else 0
     dir_y = 1 if dy_steps >= 0 else 0
@@ -86,7 +86,7 @@ def pack_gcode_line(dx_steps, dy_steps, pen_down, plot_end):
             0x00, 0x00, 0x00, 0x00,
             (delay_servo_ticks >> 8) & 0xFF, delay_servo_ticks & 0xFF
         ])
-        return packet
+        return [packet]
 
     d_acel = (max_draw_v ** 2 - min_draw_v ** 2) / (2 * ac)
     if dist_total_mm < 2 * d_acel:
@@ -137,8 +137,9 @@ def pack_gcode_line(dx_steps, dy_steps, pen_down, plot_end):
         delay_high_bits = (delay_16bit >> 8) & 0xFF
         delay_low_bits = delay_16bit & 0xFF
         packet = bytearray([0xAA, control_byte, x_high_bits, x_low_bits, y_high_bits, y_low_bits, delay_high_bits, delay_low_bits])
+        packets.append(packet)
 
-    return packet
+    return packets
 
 
 def parse_gcode():
@@ -216,27 +217,32 @@ def parse_gcode():
                     dy_steps = target_step_y - current_step_y
 
                     if dx_steps != 0 or dy_steps != 0 or pen_change:
-                        packet = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
+                        packets = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
 
-                        if SIM:
-                            hex_str = ' '.join([f"{b:02X}" for b in packet])
-                            print(#hex_str)
-                                f"Comando: {line} | Bytes: [{hex_str}] | Pasos a dar: X={dx_steps}, Y={dy_steps} | Lápiz: {pen_state} | Fin: {plot_end}")
-                        else:
-                            ser.write(packet)
-                            time.sleep(0.01)
+                        for packet in packets:
+                            if SIM:
+                                hex_str = ' '.join([f"{b:02X}" for b in packet])
+                                print(f"Comando: {line} | Bytes: [{hex_str}] | Pasos: X={dx_steps}, Y={dy_steps}")
+                            else:
+                                ser.write(packet)
+                                respuesta = ser.read(2)
+
+                                if respuesta != b'OK':
+                                    print(f"ACK inválido recibido: {respuesta}")
 
                         sent_lines += 1
-
-                    pos_x_actual = meta_x_norm
-                    pos_y_actual = meta_y_norm
-
             plot_end = 1
-            end_packet = pack_gcode_line(0, 0, pen_state, plot_end)
-            hex_str = ' '.join([f"{b:02X}" for b in end_packet])
-            print(f"Comando: FIN DE ARCHIVO (M2)  | Bytes: [{hex_str}] | Lápiz: {pen_state} | Fin: {plot_end}")
-            if not SIM:
-                ser.write(end_packet)
+            end_packets = pack_gcode_line(0, 0, pen_state, plot_end)
+
+            for packet in end_packets:
+                if SIM:
+                    hex_str = ' '.join([f"{b:02X}" for b in packet])
+                    print(f"Comando: FIN DE ARCHIVO (M2)  | Bytes: [{hex_str}] | Fin: {plot_end}")
+                else:
+                    ser.write(packet)
+                    respuesta = ser.read(2)
+                    if respuesta != b'OK':
+                        print(f"ACK inválido en paquete final: {respuesta}")
 
     except FileNotFoundError:
         print(f"Error: No se encontró el file {GCODE_FILE}. Asegúrate de que está en la misma carpeta.")
