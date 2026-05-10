@@ -6,12 +6,12 @@ library work;
 entity uart_rx is
     generic (
         -- 100 MHz clk / 115200 baud = 868
-        cycles_per_bit : integer := 868 
+        cycles_per_bit : integer := 868
     );
     port (
         clk          : in  std_logic;
-        rx           : in  std_logic; 
-        rx_data      : out std_logic_vector(7 downto 0) := (others => '0'); 
+        rx           : in  std_logic;
+        rx_data      : out std_logic_vector(7 downto 0) := (others => '0');
         rx_done_tick : out std_logic := '0'
     );
 end uart_rx;
@@ -55,7 +55,7 @@ begin
                     if clk_count = cycles_per_bit-1 then
                         clk_count <= 0;
                         rx_data_reg(bit_index) <= rx;
-                        
+
                         if bit_index < 7 then
                             bit_index <= bit_index + 1;
                         else
@@ -68,8 +68,8 @@ begin
 
                 when RX_STOP_BIT =>
                     if clk_count = cycles_per_bit-1 then
-                        rx_data <= rx_data_reg; 
-                        rx_done_tick <= '1';    
+                        rx_data <= rx_data_reg;
+                        rx_done_tick <= '1';
                         state <= CLEANUP;
                     else
                         clk_count <= clk_count + 1;
@@ -77,10 +77,10 @@ begin
 
                 when CLEANUP =>
                     state <= IDLE;
-                    
+
                 when others =>
                     state <= IDLE;
-                    
+
             end case;
         end if;
     end process;

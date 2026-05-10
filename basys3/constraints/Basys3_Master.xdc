@@ -178,9 +178,9 @@ set_property PACKAGE_PIN A15 [get_ports {servo_pwm}]
 
 
 ##Pmod Header JC
-##Sch name = JC1
-#set_property PACKAGE_PIN K17 [get_ports {JC[0]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JC[0]}]
+#Sch name = JC1
+set_property PACKAGE_PIN K17 [get_ports {tx}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {tx}]
 ##Sch name = JC2
 #set_property PACKAGE_PIN M18 [get_ports {JC[1]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JC[1]}]
