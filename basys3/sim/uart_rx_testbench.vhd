@@ -26,12 +26,12 @@ architecture sim of uart_rx_tb is
     constant BIT_PERIOD : time := 8680 ns;   -- 1/115200 baudios = ~8.68 us
 
 begin
-    UUT: uart_rx 
+    UUT: uart_rx
         port map (
-            clk          => clk_tb,
-            rx           => rx_tb,
-            rx_data      => rx_data_tb,
-            rx_done_tick => rx_done_tick_tb
+        clk          => clk_tb,
+        rx           => rx_tb,
+        rx_data      => rx_data_tb,
+        rx_done_tick => rx_done_tick_tb
         );
 
     clk_process : process
@@ -47,12 +47,12 @@ begin
         begin
             rx_tb <= '0';
             wait for BIT_PERIOD;
-            
+
             for i in 0 to 7 loop
                 rx_tb <= data(i);
                 wait for BIT_PERIOD;
             end loop;
-            
+
             rx_tb <= '1';
             wait for BIT_PERIOD;
         end procedure;
@@ -61,23 +61,23 @@ begin
         wait for 10 us;
 
         send_byte(x"AA");
-     
+
         wait for 20 us;
 
         send_byte(x"07");
-        
+
         wait for 20 us;
 
         send_byte(x"11");
-        
+
         wait for 20 us;
 
         send_byte(x"1D");
-        
+
         wait for 20 us;
 
         send_byte(x"14");
-        
+
         wait for 20 us;
 
         send_byte(x"1E");

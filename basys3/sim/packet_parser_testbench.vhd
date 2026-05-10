@@ -26,7 +26,7 @@ architecture sim of packet_parser_tb is
     signal clk_tb          : std_logic := '0';
     signal rx_data_tb      : std_logic_vector(7 downto 0) := (others => '0');
     signal rx_done_tick_tb : std_logic := '0';
-    
+
     signal dx_out, dy_out  : std_logic_vector(15 downto 0);
     signal delay         : std_logic_vector(15 downto 0);
     signal dx_dir, dy_dir  : std_logic;
@@ -39,23 +39,25 @@ begin
 
     UUT: packet_parser
         port map (
-            clk          => clk_tb,
-            rx_data      => rx_data_tb,
-            rx_done_tick => rx_done_tick_tb,
-            dx_steps     => dx_out,
-            dy_steps     => dy_out,
-            delay_out    => delay,
-            dir_x        => dx_dir,
-            dir_y        => dy_dir,
-            pen_down     => p_down,
-            plot_end     => p_end,
-            packet_ready => p_ready
+        clk          => clk_tb,
+        rx_data      => rx_data_tb,
+        rx_done_tick => rx_done_tick_tb,
+        dx_steps     => dx_out,
+        dy_steps     => dy_out,
+        delay_out    => delay,
+        dir_x        => dx_dir,
+        dir_y        => dy_dir,
+        pen_down     => p_down,
+        plot_end     => p_end,
+        packet_ready => p_ready
         );
 
     clk_process : process
     begin
-        clk_tb <= '0'; wait for CLK_PERIOD/2;
-        clk_tb <= '1'; wait for CLK_PERIOD/2;
+        clk_tb <= '0';
+        wait for CLK_PERIOD/2;
+        clk_tb <= '1';
+        wait for CLK_PERIOD/2;
     end process;
 
     stim_proc: process
@@ -70,7 +72,7 @@ begin
 
     begin
         wait for 100 ns;
-        
+
         send_byte(x"AA"); -- Sincronización
         send_byte(x"03"); -- Control (Dir X=1, Dir Y=1, Pen=0, End=0)
         send_byte(x"11"); -- X High
@@ -81,20 +83,20 @@ begin
         send_byte(x"00"); -- Delay Low
 
         wait for 100 ns;
-        
-        send_byte(x"AA"); 
-        send_byte(x"07"); 
-        send_byte(x"10"); 
-        send_byte(x"D4"); 
-        send_byte(x"23"); 
-        send_byte(x"51"); 
+
+        send_byte(x"AA");
+        send_byte(x"07");
+        send_byte(x"10");
+        send_byte(x"D4");
+        send_byte(x"23");
+        send_byte(x"51");
         send_byte(x"44");
         send_byte(x"22");
-        
+
         wait for 10 ns;
-        
+
         send_byte(x"32"); -- junk
         send_byte(x"FF");
-       
+
     end process;
 end sim;

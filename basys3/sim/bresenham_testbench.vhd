@@ -31,7 +31,7 @@ architecture sim of bresenham_tb is
     signal delay_in_tb     : std_logic_vector(15 downto 0) := (others => '0');
     signal dir_x_in_tb     : std_logic := '0';
     signal dir_y_in_tb     : std_logic := '0';
-    
+
     signal step_x_tb       : std_logic;
     signal dir_x_tb        : std_logic;
     signal step_y_tb       : std_logic;
@@ -44,44 +44,46 @@ begin
 
     UUT: bresenham
         port map (
-            clk          => clk_tb,
-            packet_ready => packet_ready_tb,
-            dx_in        => dx_in_tb,
-            dy_in        => dy_in_tb,
-            delay_in     => delay_in_tb,
-            dir_x_in     => dir_x_in_tb,
-            dir_y_in     => dir_y_in_tb,
-            step_x       => step_x_tb,
-            dir_x        => dir_x_tb,
-            step_y       => step_y_tb,
-            dir_y        => dir_y_tb,
-            busy         => busy_tb
+        clk          => clk_tb,
+        packet_ready => packet_ready_tb,
+        dx_in        => dx_in_tb,
+        dy_in        => dy_in_tb,
+        delay_in     => delay_in_tb,
+        dir_x_in     => dir_x_in_tb,
+        dir_y_in     => dir_y_in_tb,
+        step_x       => step_x_tb,
+        dir_x        => dir_x_tb,
+        step_y       => step_y_tb,
+        dir_y        => dir_y_tb,
+        busy         => busy_tb
         );
 
     clk_process : process
     begin
-        clk_tb <= '0'; wait for CLK_PERIOD/2;
-        clk_tb <= '1'; wait for CLK_PERIOD/2;
+        clk_tb <= '0';
+        wait for CLK_PERIOD/2;
+        clk_tb <= '1';
+        wait for CLK_PERIOD/2;
     end process;
 
     stim_proc: process
     begin
         wait for 50 ns;
-        
-        dx_in_tb    <= x"0005"; 
+
+        dx_in_tb    <= x"0005";
         dy_in_tb    <= x"0002";
         delay_in_tb <= x"1111";
-        dir_x_in_tb <= '1';    
-        dir_y_in_tb <= '0';    
+        dir_x_in_tb <= '1';
+        dir_y_in_tb <= '0';
 
         packet_ready_tb <= '1';
         wait for CLK_PERIOD;
         packet_ready_tb <= '0';
 
         wait until busy_tb = '0';
-        
+
         wait for 100 ns;
-       
+
     end process;
 
 end sim;

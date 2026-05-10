@@ -9,21 +9,21 @@ architecture sim of plotter_top_tb is
 
     component plotter_top is
         port (
-            clk       : in  std_logic;
-            rx        : in  std_logic;
+            clk           : in  std_logic;
+            rx            : in  std_logic;
             sw_enable_x   : in  std_logic;
             sw_enable_y   : in  std_logic;
-            limit_x   : in  std_logic;
-            limit_y   : in  std_logic;
-            step_x    : out std_logic;
-            dir_x     : out std_logic;
-            en_x_out  : out std_logic;
-            step_y    : out std_logic;
-            dir_y     : out std_logic;
-            en_y_out  : out std_logic;
-            servo_pwm : out std_logic;
-            led_done  : out std_logic;
-            tx        : out std_logic
+            limit_x       : in  std_logic;
+            limit_y       : in  std_logic;
+            step_x        : out std_logic;
+            dir_x         : out std_logic;
+            en_x_out      : out std_logic;
+            step_y        : out std_logic;
+            dir_y         : out std_logic;
+            en_y_out      : out std_logic;
+            servo_pwm     : out std_logic;
+            led_done      : out std_logic;
+            tx            : out std_logic
         );
     end component;
 
@@ -33,7 +33,7 @@ architecture sim of plotter_top_tb is
     signal sw_en_y_tb   : std_logic := '0';
     signal limit_x_tb   : std_logic := '1';
     signal limit_y_tb   : std_logic := '1';
-    
+
     signal step_x_tb    : std_logic;
     signal dir_x_tb     : std_logic;
     signal en_x_out_tb  : std_logic;
@@ -52,7 +52,7 @@ architecture sim of plotter_top_tb is
         signal tx_line   : out std_logic
     ) is
     begin
-        tx_line <= '0'; 
+        tx_line <= '0';
         wait for BIT_PERIOD;
         for i in 0 to 7 loop
             tx_line <= data_in(i);
@@ -86,7 +86,7 @@ architecture sim of plotter_top_tb is
         send_uart_byte(d_vec(15 downto 8), tx_line); -- 6. Delay_High
         send_uart_byte(d_vec(7 downto 0), tx_line);  -- 7. Delay_Low
     end procedure;
-    
+
     procedure wait_for_uart_byte (
         signal tx_line : in std_logic
     ) is
@@ -99,27 +99,29 @@ begin
 
     UUT: plotter_top
         port map (
-            clk       => clk_tb,
-            rx        => rx_tb,
-            sw_enable_x   => sw_en_x_tb,
-            sw_enable_y   => sw_en_y_tb,
-            limit_x   => limit_x_tb,
-            limit_y   => limit_y_tb,
-            step_x    => step_x_tb,
-            dir_x     => dir_x_tb,
-            en_x_out  => en_x_out_tb,
-            step_y    => step_y_tb,
-            dir_y     => dir_y_tb,
-            en_y_out  => en_y_out_tb,
-            servo_pwm => servo_pwm_tb,
-            led_done  => led_done_tb,
-            tx        => tx_tb
+        clk       => clk_tb,
+        rx        => rx_tb,
+        sw_enable_x   => sw_en_x_tb,
+        sw_enable_y   => sw_en_y_tb,
+        limit_x   => limit_x_tb,
+        limit_y   => limit_y_tb,
+        step_x    => step_x_tb,
+        dir_x     => dir_x_tb,
+        en_x_out  => en_x_out_tb,
+        step_y    => step_y_tb,
+        dir_y     => dir_y_tb,
+        en_y_out  => en_y_out_tb,
+        servo_pwm => servo_pwm_tb,
+        led_done  => led_done_tb,
+        tx        => tx_tb
         );
 
     clk_process : process
     begin
-        clk_tb <= '0'; wait for CLK_PERIOD/2;
-        clk_tb <= '1'; wait for CLK_PERIOD/2;
+        clk_tb <= '0';
+        wait for CLK_PERIOD/2;
+        clk_tb <= '1';
+        wait for CLK_PERIOD/2;
     end process;
 
     stim_proc: process
@@ -144,7 +146,7 @@ begin
         send_packet(x"03", 0, 0, 4, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
-        
+
         -- PAQUETE 4: Mover 10 pasos hacia atrás en X (X=-10, Y=0)
         -- Dir_X=0, Dir_Y=1, Pen=0, End=0 -> Control = "00000010" (0x02)
         send_packet(x"02", 10, 0, 4, rx_tb);

@@ -30,20 +30,22 @@ architecture sim of uart_tx_tb is
 begin
     UUT: uart_tx
         generic map (
-            cycles_per_bit => 868
+        cycles_per_bit => 868
         )
         port map (
-            clk       => clk_tb,
-            tx_start  => tx_start_tb,
-            tx_data   => tx_data_tb,
-            tx_active => tx_active_tb,
-            tx_out    => tx_out_tb
+        clk       => clk_tb,
+        tx_start  => tx_start_tb,
+        tx_data   => tx_data_tb,
+        tx_active => tx_active_tb,
+        tx_out    => tx_out_tb
         );
 
     clk_process : process
     begin
-        clk_tb <= '0'; wait for CLK_PERIOD/2;
-        clk_tb <= '1'; wait for CLK_PERIOD/2;
+        clk_tb <= '0';
+        wait for CLK_PERIOD/2;
+        clk_tb <= '1';
+        wait for CLK_PERIOD/2;
     end process;
 
     stim_proc: process
@@ -58,12 +60,12 @@ begin
         tx_start_tb <= '0';
 
         wait until tx_active_tb = '0';
-        
-        wait for 20 us; 
+
+        wait for 20 us;
 
         tx_data_tb  <= x"4B";
         wait for CLK_PERIOD;
-        
+
         tx_start_tb <= '1';
         wait for CLK_PERIOD;
         tx_start_tb <= '0';

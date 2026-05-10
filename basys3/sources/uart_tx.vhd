@@ -40,7 +40,7 @@ begin
                         tx_data_reg <= tx_data;
                         state <= TX_START_BIT;
                     end if;
-                    
+
                 when TX_START_BIT =>
                     tx_active <= '1';
                     tx_out    <= '0';
@@ -50,7 +50,7 @@ begin
                         clk_count <= 0;
                         state     <= TX_DATA_BITS;
                     end if;
-                    
+
                 when TX_DATA_BITS =>
                     tx_out <= tx_data_reg(bit_index);
                     if clk_count < cycles_per_bit - 1 then
@@ -64,7 +64,7 @@ begin
                             state     <= TX_STOP_BIT;
                         end if;
                     end if;
-                    
+
                 when TX_STOP_BIT =>
                     tx_out <= '1';
                     if clk_count < cycles_per_bit - 1 then
@@ -73,7 +73,7 @@ begin
                         clk_count <= 0;
                         state     <= IDLE;
                     end if;
-                    
+
             end case;
         end if;
     end process;
