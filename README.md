@@ -7,15 +7,12 @@ FBP se trata de una máquina CNC tipo plotter, capaz de dibujar sobre un plano u
 
 En el proyecto se encuentran tanto los ficheros en relación con el procesado de G-Code, como el código VHDL correspondiente al proyecto. La conversión de imagen a G-code se ha realizado utilizando la herramienta [image2gcode](https://github.com/LittleSurvival/image2gcode).
 
-### Preprocesado de G-Code
+La memoria descriptiva del proyecto puede encontrarse en la carpeta `docs`, en formato PDF.
 
-Antes de realizar cualquier operación, deberemos procesar nuestro G-Code generado por la herramienta anteriormente mencionada. Para ello, aproximaremos a 4 decimales, utilizando el script `rounder.py`, el cual también eliminará instrucciones innecesarias.
+El **circuito** del proyecto queda definido bajo el siguiente esquema (puede haber simbología no coincidente):
 
-```
-uv sync
-uv run ./external/rounder.py <gcode entrada> <fich. salida>
-```
+![Circuito electrónico](docs/fbp-circuit.png)
 
-Este código filtrado, lo codificaremos en paquetes binarios de 6 Bytes, que serán comunicados mediante UART a la FPGA para ser leídos y poder generar los pulsos correspondientes. La estructura de los paquetes binarios es la siguiente:
+Los paquetes binarios recibidos por la Basys 3 tienen la siguiente estructura:
 
-![Paquete Binario](docs/binary-packet.png)
+![Paquete bianrio](docs/binary-packet.png)

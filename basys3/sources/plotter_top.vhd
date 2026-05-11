@@ -10,19 +10,17 @@ entity plotter_top is
 
         sw_enable_x   : in  std_logic; -- sw[0]
         sw_enable_y   : in  std_logic; -- sw[1]
-        limit_x       : in  std_logic; -- Pmod JB1
-        limit_y       : in  std_logic; -- Pmod JB2
 
         step_x        : out std_logic; -- Pmod JA1
         dir_x         : out std_logic; -- Pmod JA2
-        en_x_out      : out std_logic; -- Pmod JB3
+        en_x_out      : out std_logic; -- Pmod JB2
         step_y        : out std_logic; -- Pmod JA3
         dir_y         : out std_logic; -- Pmod JA4
-        en_y_out      : out std_logic; -- Pmod JB4
+        en_y_out      : out std_logic; -- Pmod JB3
 
-        servo_pwm     : out std_logic; -- Pmod JB7
+        servo_pwm     : out std_logic; -- Pmod JB1
         led_done      : out std_logic; -- led[15]
-        tx            : out  std_logic -- Pmod JC1
+        tx            : out  std_logic
     );
 end plotter_top;
 
