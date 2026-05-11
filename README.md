@@ -8,3 +8,11 @@ FBP se trata de una máquina CNC tipo plotter, capaz de dibujar sobre un plano u
 En el proyecto se encuentran tanto los ficheros en relación con el procesado de G-Code, como el código VHDL correspondiente al proyecto. La conversión de imagen a G-code se ha realizado utilizando la herramienta [image2gcode](https://github.com/LittleSurvival/image2gcode).
 
 La memoria descriptiva del proyecto puede encontrarse en la carpeta `docs`, en formato PDF.
+
+El **circuito** del proyecto queda definido bajo el siguiente esquema (puede haber simbología no coincidente):
+
+![Circuito electrónico](docs/fbp-circuit.png)
+
+Los paquetes binarios recibidos por la Basys 3 tienen la siguiente estructura:
+
+![Paquete bianrio](docs/binary-packet.png)
