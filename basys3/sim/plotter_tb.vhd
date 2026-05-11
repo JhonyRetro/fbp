@@ -13,8 +13,6 @@ architecture sim of plotter_top_tb is
             rx            : in  std_logic;
             sw_enable_x   : in  std_logic;
             sw_enable_y   : in  std_logic;
-            limit_x       : in  std_logic;
-            limit_y       : in  std_logic;
             step_x        : out std_logic;
             dir_x         : out std_logic;
             en_x_out      : out std_logic;
@@ -31,8 +29,6 @@ architecture sim of plotter_top_tb is
     signal rx_tb        : std_logic := '1';
     signal sw_en_x_tb   : std_logic := '0';
     signal sw_en_y_tb   : std_logic := '0';
-    signal limit_x_tb   : std_logic := '1';
-    signal limit_y_tb   : std_logic := '1';
 
     signal step_x_tb    : std_logic;
     signal dir_x_tb     : std_logic;
@@ -103,8 +99,6 @@ begin
         rx        => rx_tb,
         sw_enable_x   => sw_en_x_tb,
         sw_enable_y   => sw_en_y_tb,
-        limit_x   => limit_x_tb,
-        limit_y   => limit_y_tb,
         step_x    => step_x_tb,
         dir_x     => dir_x_tb,
         en_x_out  => en_x_out_tb,

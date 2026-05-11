@@ -151,22 +151,20 @@ set_property PACKAGE_PIN G2 [get_ports {dir_y}]
 
 ##Pmod Header JB
 #Sch name = JB1
-set_property PACKAGE_PIN A14 [get_ports {limit_x}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {limit_x}]
-	set_property PULLUP true [get_ports {limit_x}]
-#Sch name = JB2
-set_property PACKAGE_PIN A16 [get_ports {limit_y}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {limit_y}]
-	set_property PULLUP true [get_ports {limit_y}]
-#Sch name = JB3
-set_property PACKAGE_PIN B15 [get_ports {en_x_out}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {en_x_out}]
-#Sch name = JB4
-set_property PACKAGE_PIN B16 [get_ports {en_y_out}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {en_y_out}]
-#Sch name = JB7
-set_property PACKAGE_PIN A15 [get_ports {servo_pwm}]					
+set_property PACKAGE_PIN A14 [get_ports {servo_pwm}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {servo_pwm}]
+#Sch name = JB2
+set_property PACKAGE_PIN A16 [get_ports {en_x_out}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {en_x_out}]
+#Sch name = JB3
+set_property PACKAGE_PIN B15 [get_ports {en_y_out}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {en_y_out}]
+##Sch name = JB4
+#set_property PACKAGE_PIN B16 [get_ports {JB[3]}]					
+#	set_property IOSTANDARD LVCMOS33 [get_ports {JB[3]}]
+##Sch name = JB7
+#set_property PACKAGE_PIN A15 [get_ports {JB[4]}]					
+#	set_property IOSTANDARD LVCMOS33 [get_ports {JB[4]}]
 ##Sch name = JB8
 #set_property PACKAGE_PIN A17 [get_ports {JB[5]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[5]}]
