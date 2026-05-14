@@ -2,20 +2,12 @@ import serial
 import sys
 import time
 import re
-import math
 
 GCODE_FILE = sys.argv[1]
-PUERTO_SERIE = '' # sustituir por puerto donde esté conectada la FPGA
+PUERTO_SERIE = 'COM7' # Sustituir por puerto donde esté conectada la FPGA
 BAUD_RATE = 115200
-internal_clk = 100_000_000
-min_draw_v = 10
-max_draw_v = 200 # en mm/s
-ac = 1000
-servo_delay = 150 # ms
-SEGMENT_MM = 1
 STEPS_PER_MM = 80 # sustituir dependiendo de los uSteps del driver
-
-SIM = True
+SIM = False
 
 normalize = True
 # Medidas en mm
@@ -64,82 +56,21 @@ def get_boundaries(file):
 
 
 def pack_gcode_line(dx_steps, dy_steps, pen_down, plot_end):
-    packets = []
-
     dir_x = 1 if dx_steps >= 0 else 0
     dir_y = 1 if dy_steps >= 0 else 0
 
     control_byte = (plot_end << 3) | (pen_down << 2) | (dir_y << 1) | dir_x
 
-    abs_steps_x = abs(dx_steps)
-    abs_steps_y = abs(dy_steps)
-    dx_mm = abs_steps_x / STEPS_PER_MM
-    dy_mm = abs_steps_y / STEPS_PER_MM
-    dist_total_mm = math.hypot(dx_mm, dy_mm)
+    steps_x = min(abs(dx_steps), 65535)
+    steps_y = min(abs(dy_steps), 65535)
 
-    if dist_total_mm == 0:
-        delay_servo_ticks = int((internal_clk * (servo_delay / 1000.0)) / 8)
-        delay_servo_ticks = max(1, min(65535, delay_servo_ticks))
+    x_high_bits = (steps_x >> 8) & 0xFF
+    x_low_bits = steps_x & 0xFF
+    y_high_bits = (steps_y >> 8) & 0xFF
+    y_low_bits = steps_y & 0xFF
 
-        packet = bytearray([
-            0xAA, control_byte,
-            0x00, 0x00, 0x00, 0x00,
-            (delay_servo_ticks >> 8) & 0xFF, delay_servo_ticks & 0xFF
-        ])
-        return [packet]
-
-    d_acel = (max_draw_v ** 2 - min_draw_v ** 2) / (2 * ac)
-    if dist_total_mm < 2 * d_acel:
-        d_acel = dist_total_mm / 2  # Perfil triangular si la línea es corta
-
-    x_recorrida = 0.0
-    pasos_dados_x = 0
-    pasos_dados_y = 0
-
-    while x_recorrida < dist_total_mm:
-
-        if x_recorrida < d_acel:
-            # Rampa de subida
-            v_actual = math.sqrt(min_draw_v ** 2 + 2 * ac * x_recorrida)
-        elif x_recorrida > (dist_total_mm - d_acel):
-            # Rampa de frenada
-            dist_restante = dist_total_mm - x_recorrida
-            v_actual = math.sqrt(min_draw_v ** 2 + 2 * ac * max(0, dist_restante))
-        else:
-            v_actual = max_draw_v
-
-        v_actual = max(min_draw_v, min(v_actual, max_draw_v))
-
-        ticks = internal_clk / (STEPS_PER_MM * v_actual)
-        delay_16bit = int(ticks / 8)
-        delay_16bit = max(1, min(65535, delay_16bit))  # Clamp de seguridad a 2 bytes
-
-        x_siguiente = min(x_recorrida + SEGMENT_MM, dist_total_mm)
-        ratio = x_siguiente / dist_total_mm
-
-        target_x = int(abs_steps_x * ratio)
-        target_y = int(abs_steps_y * ratio)
-
-        pasos_paquete_x = target_x - pasos_dados_x
-        pasos_paquete_y = target_y - pasos_dados_y
-
-        pasos_dados_x += pasos_paquete_x
-        pasos_dados_y += pasos_paquete_y
-        x_recorrida = x_siguiente
-
-        steps_x_clamp = min(pasos_paquete_x, 65535)
-        steps_y_clamp = min(pasos_paquete_y, 65535)
-
-        x_high_bits = (steps_x_clamp >> 8) & 0xFF
-        x_low_bits = steps_x_clamp & 0xFF
-        y_high_bits = (steps_y_clamp >> 8) & 0xFF
-        y_low_bits = steps_y_clamp & 0xFF
-        delay_high_bits = (delay_16bit >> 8) & 0xFF
-        delay_low_bits = delay_16bit & 0xFF
-        packet = bytearray([0xAA, control_byte, x_high_bits, x_low_bits, y_high_bits, y_low_bits, delay_high_bits, delay_low_bits])
-        packets.append(packet)
-
-    return packets
+    packet = bytearray([0xAA, control_byte, x_high_bits, x_low_bits, y_high_bits, y_low_bits])
+    return packet
 
 
 def parse_gcode():
@@ -217,32 +148,33 @@ def parse_gcode():
                     dy_steps = target_step_y - current_step_y
 
                     if dx_steps != 0 or dy_steps != 0 or pen_change:
-                        packets = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
+                        packet = pack_gcode_line(dx_steps, dy_steps, pen_state, plot_end)
 
-                        for packet in packets:
-                            if SIM:
-                                hex_str = ' '.join([f"{b:02X}" for b in packet])
-                                print(f"Comando: {line} | Bytes: [{hex_str}] | Pasos: X={dx_steps}, Y={dy_steps}")
-                            else:
-                                ser.write(packet)
-                                respuesta = ser.read(2)
-
-                                if respuesta != b'OK':
-                                    print(f"ACK inválido recibido: {respuesta}")
-
+                        if SIM:
+                            hex_str = ' '.join([f"{b:02X}" for b in packet])
+                            print(#hex_str)
+                                f"Comando: {line} | Bytes: [{hex_str}] | Pasos a dar: X={dx_steps}, Y={dy_steps} | Lápiz: {pen_state} | Fin: {plot_end}")
+                        else:
+                            #hex_str = ' '.join([f"{b:02X}" for b in packet])
+                            #print(f"Linea {sent_lines + 1}: {hex_str}")
+                            ser.write(packet)
+                            respuesta = ser.read(2)
+                            if respuesta != b'OK':
+                                print(f"ACK inesperado: {respuesta}")
                         sent_lines += 1
-            plot_end = 1
-            end_packets = pack_gcode_line(0, 0, pen_state, plot_end)
 
-            for packet in end_packets:
-                if SIM:
-                    hex_str = ' '.join([f"{b:02X}" for b in packet])
-                    print(f"Comando: FIN DE ARCHIVO (M2)  | Bytes: [{hex_str}] | Fin: {plot_end}")
-                else:
-                    ser.write(packet)
-                    respuesta = ser.read(2)
-                    if respuesta != b'OK':
-                        print(f"ACK inválido en paquete final: {respuesta}")
+                    pos_x_actual = meta_x_norm
+                    pos_y_actual = meta_y_norm
+
+            plot_end = 1
+            end_packet = pack_gcode_line(0, 0, pen_state, plot_end)
+            hex_str = ' '.join([f"{b:02X}" for b in end_packet])
+            print(f"Comando: FIN DE ARCHIVO (M2)  | Bytes: [{hex_str}] | Lápiz: {pen_state} | Fin: {plot_end}")
+            if not SIM:
+                ser.write(end_packet)
+                respuesta = ser.read(2)
+                if respuesta != b'OK':
+                    print(f"ACK inesperado: {respuesta}")
 
     except FileNotFoundError:
         print(f"Error: No se encontró el file {GCODE_FILE}. Asegúrate de que está en la misma carpeta.")
