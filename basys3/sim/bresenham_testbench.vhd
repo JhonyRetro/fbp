@@ -8,14 +8,19 @@ end bresenham_tb;
 architecture sim of bresenham_tb is
 
     component bresenham is
+        generic (
+            delay_max    : integer;
+            delay_min    : integer;
+            ramp_steps   : integer
+        );
         port (
             clk          : in  std_logic;
             packet_ready : in  std_logic;
             dx_in        : in  std_logic_vector(15 downto 0);
             dy_in        : in  std_logic_vector(15 downto 0);
-            delay_in     : in  std_logic_vector(15 downto 0);
             dir_x_in     : in  std_logic;
             dir_y_in     : in  std_logic;
+            pen_state    : in  std_logic;
             step_x       : out std_logic;
             dir_x        : out std_logic;
             step_y       : out std_logic;
@@ -28,9 +33,9 @@ architecture sim of bresenham_tb is
     signal packet_ready_tb : std_logic := '0';
     signal dx_in_tb        : std_logic_vector(15 downto 0) := (others => '0');
     signal dy_in_tb        : std_logic_vector(15 downto 0) := (others => '0');
-    signal delay_in_tb     : std_logic_vector(15 downto 0) := (others => '0');
     signal dir_x_in_tb     : std_logic := '0';
     signal dir_y_in_tb     : std_logic := '0';
+    signal pen_state_tb    : std_logic := '0';
 
     signal step_x_tb       : std_logic;
     signal dir_x_tb        : std_logic;
@@ -43,14 +48,20 @@ architecture sim of bresenham_tb is
 begin
 
     UUT: bresenham
+        generic map (
+        delay_max    => 150000,
+        delay_min    => 40000,
+        ramp_steps   => 200
+        )
+        
         port map (
         clk          => clk_tb,
         packet_ready => packet_ready_tb,
         dx_in        => dx_in_tb,
         dy_in        => dy_in_tb,
-        delay_in     => delay_in_tb,
         dir_x_in     => dir_x_in_tb,
         dir_y_in     => dir_y_in_tb,
+        pen_state    => pen_state_tb,
         step_x       => step_x_tb,
         dir_x        => dir_x_tb,
         step_y       => step_y_tb,
@@ -70,9 +81,8 @@ begin
     begin
         wait for 50 ns;
 
-        dx_in_tb    <= x"0005";
-        dy_in_tb    <= x"0002";
-        delay_in_tb <= x"1111";
+        dx_in_tb    <= x"0FFF";
+        dy_in_tb    <= x"0FFF";
         dir_x_in_tb <= '1';
         dir_y_in_tb <= '0';
 
@@ -81,8 +91,10 @@ begin
         packet_ready_tb <= '0';
 
         wait until busy_tb = '0';
-
+        
         wait for 100 ns;
+        
+        
 
     end process;
 

@@ -62,16 +62,13 @@ architecture sim of plotter_top_tb is
         constant ctrl  : in std_logic_vector(7 downto 0);
         constant x_val : in integer;
         constant y_val : in integer;
-        constant d_val : in integer;
         signal tx_line : out std_logic
     ) is
         variable x_vec : std_logic_vector(15 downto 0);
         variable y_vec : std_logic_vector(15 downto 0);
-        variable d_vec : std_logic_vector(15 downto 0);
     begin
         x_vec := std_logic_vector(to_unsigned(x_val, 16));
         y_vec := std_logic_vector(to_unsigned(y_val, 16));
-        d_vec := std_logic_vector(to_unsigned(d_val, 16));
 
         send_uart_byte(x"AA", tx_line);           -- 0. Sync
         send_uart_byte(ctrl, tx_line);            -- 1. Control
@@ -79,8 +76,6 @@ architecture sim of plotter_top_tb is
         send_uart_byte(x_vec(7 downto 0), tx_line);  -- 3. X_Low
         send_uart_byte(y_vec(15 downto 8), tx_line); -- 4. Y_High
         send_uart_byte(y_vec(7 downto 0), tx_line);  -- 5. Y_Low
-        send_uart_byte(d_vec(15 downto 8), tx_line); -- 6. Delay_High
-        send_uart_byte(d_vec(7 downto 0), tx_line);  -- 7. Delay_Low
     end procedure;
 
     procedure wait_for_uart_byte (
@@ -125,37 +120,37 @@ begin
         -- PAQUETE 1: Mover 30 pasos en ambos ejes
         -- Dir_X=1, Dir_Y=1, Pen=0, End=0 -> Control = "00000011" (0x03)
         -- Delay = 4 (Para simulación rápida)
-        send_packet(x"03", 30, 30, 4, rx_tb);
+        send_packet(x"07", 240, 240, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
 
         -- PAQUETE 2: Bajar Lápiz (Movimiento 0)
         -- Dir_X=1, Dir_Y=1, Pen=1, End=0 -> Control = "00000111" (0x07)
-        send_packet(x"07", 0, 0, 4, rx_tb);
+        send_packet(x"07", 0, 0, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
 
         -- PAQUETE 3: Subir Lápiz (Movimiento 0)
         -- Dir_X=1, Dir_Y=1, Pen=0, End=0 -> Control = "00000011" (0x03)
-        send_packet(x"03", 0, 0, 4, rx_tb);
+        send_packet(x"03", 0, 0, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
 
         -- PAQUETE 4: Mover 10 pasos hacia atrás en X (X=-10, Y=0)
         -- Dir_X=0, Dir_Y=1, Pen=0, End=0 -> Control = "00000010" (0x02)
-        send_packet(x"02", 10, 0, 4, rx_tb);
+        send_packet(x"02", 80, 0, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
 
         -- PAQUETE 5: Mover 10 pasos hacia atrás en Y (X=0, Y=-10)
         -- Dir_X=1, Dir_Y=0, Pen=0, End=0 -> Control = "00000001" (0x01)
-        send_packet(x"01", 0, 10, 4, rx_tb);
+        send_packet(x"01", 0, 80, rx_tb);
         wait_for_uart_byte(tx_tb);
         wait for 20 us;
 
         -- PAQUETE 6: Fin de Trabajo
         -- Dir_X=1, Dir_Y=1, Pen=0, End=1 -> Control = "00001011" (0x0B)
-        send_packet(x"0B", 0, 0, 4, rx_tb);
+        send_packet(x"0B", 0, 0, rx_tb);
         wait_for_uart_byte(tx_tb);
 
         wait for 500 us;
