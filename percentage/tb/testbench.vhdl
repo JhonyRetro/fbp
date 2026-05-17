@@ -5,7 +5,6 @@ entity testbench is
 end entity testbench;
 
 architecture test of testbench is
-    signal   clk    : std_logic := '0';
     signal   length : integer := 100;
     signal   i      : integer := 0;
     signal   seg    : std_logic_vector(6 downto 0) := (others => '0');
@@ -15,31 +14,19 @@ architecture test of testbench is
 begin
     uut: entity work.controller
         port map (
-            clk    => clk,
             length => length,
             i      => i,
             seg    => seg,
             an     => an
         );
 
-    clock: process
+    stimulus: process
     begin
-        while true loop
-            clk <= '0';
-            wait for period;
-            clk <= '1';
-            wait for period;
-        end loop;
+        wait for 10 ns;
+        i <= i + 1;
     end process;
 
-    stimulus: process(clk)
-    begin
-        if rising_edge(clk) then
-            i <= i + 1;
-        end if;
-    end process;
-
-    stop : process
+    stop: process
     begin
         wait for 2 us;
         assert false report "END" severity failure;
