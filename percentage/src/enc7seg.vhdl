@@ -30,31 +30,31 @@ architecture rtl of enc7seg is
 
     signal lhs : integer := 0;
     signal rhs : integer := 0;
+
+    signal sel : std_logic := '0';
 begin
+    lhs <= 0
+        when num < 0
+        or num > 99
+        else num / 10;
+
+    rhs <= 0
+        when num < 0
+        or num > 99
+        else num mod 10;
+
     process(clk)
     begin
-        if num < 0 or num > 99 then
-            lhs <= 0;
-            rhs <= 0;
-        else
-            lhs <= num / 10;
-            rhs <= num mod 10;
+        if falling_edge(clk) then
+            sel <= not sel;
         end if;
     end process;
 
-    update_lhs: process(clk)
-    begin
-        if falling_edge(clk) then
-            an  <= "1011";
-            seg <= encode(lhs);
-        end if;
-    end process update_lhs;
+    seg <= encode(lhs)
+        when sel = '1'
+        else encode(rhs);
 
-    update_rhs: process(clk)
-    begin
-        if rising_edge(clk) then
-            an  <= "1101";
-            seg <= encode(rhs);
-        end if;
-    end process update_rhs;
+    an  <= "1011"
+        when sel = '1'
+        else "1101";
 end architecture rtl;
