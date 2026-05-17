@@ -15,7 +15,7 @@ begin
         variable j : integer;
     begin
         if length > 0 then
-            j <= (i * 100) / length;
+            j := (i * 100) / length;
             if j < 1 then
                 result <= 0;
             elsif j > 99 then
