@@ -2,20 +2,23 @@ GHDL=ghdl
 GTKWAVE=gtkwave
 WORKDIR=sim/work
 WAVES=sim/waveform
-TB=tb
+TB=testbench
 
-all: run
+all: mkdir run
 
-analyse:
+mkdir:
+	mkdir -p $(WORKDIR) $(WAVES)
+
+analyse: mkdir
 	$(GHDL) -a --workdir=$(WORKDIR) src/*.vhdl tb/*.vhdl
 
-elaborate:
+elaborate: mkdir
 	$(GHDL) -e --workdir=$(WORKDIR) $(TB)
 
 run: analyse elaborate
 	$(GHDL) -r --workdir=$(WORKDIR) $(TB) --vcd=$(WAVES)/$(TB).vcd
 
-view:
+view: mkdir
 	$(GTKWAVE) $(WAVES)/$(TB).vcd
 
 clean:
