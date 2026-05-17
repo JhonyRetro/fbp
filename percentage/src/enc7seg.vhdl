@@ -1,16 +1,17 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity dec7seg is
+entity enc7seg is
     port (
+        clk : in  std_logic;
         num : in  integer;
         seg : out std_logic_vector(6 downto 0);
         an  : out std_logic_vector(3 downto 0)
     );
-end entity dec7seg;
+end entity enc7seg;
 
-architecture rtl of dec7seg is
-    function decode(d: integer) return std_logic_vector is
+architecture rtl of enc7seg is
+    function encode(d: integer) return std_logic_vector is
     begin
         case d is
             when 0      => return "0000001";
@@ -25,12 +26,12 @@ architecture rtl of dec7seg is
             when 9      => return "0000100";
             when others => return "1111111";
         end case;
-    end function decode;
+    end function encode;
 
     signal lhs : integer := 0;
     signal rhs : integer := 0;
 begin
-    process(num)
+    process(clk)
     begin
         if num < 0 or num > 99 then
             lhs <= 0;
@@ -41,15 +42,19 @@ begin
         end if;
     end process;
 
-    update_lhs: process(lhs)
+    update_lhs: process(clk)
     begin
-        an  <= "1011";
-        seg <= decode(lhs);
+        if falling_edge(clk) then
+            an  <= "1011";
+            seg <= encode(lhs);
+        end if;
     end process update_lhs;
 
-    update_rhs: process(rhs)
+    update_rhs: process(clk)
     begin
-        an  <= "1101";
-        seg <= decode(rhs);
+        if rising_edge(clk) then
+            an  <= "1101";
+            seg <= encode(rhs);
+        end if;
     end process update_rhs;
 end architecture rtl;

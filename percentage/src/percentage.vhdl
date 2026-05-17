@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity percentage is
     port (
+        clk    : in  std_logic;
         length : in  integer;
         i      : in  integer;
         result : out integer
@@ -12,7 +13,7 @@ end entity percentage;
 architecture rtl of percentage is
     signal j : integer := 0;
 begin
-    process(i)
+    process(clk)
     begin
         if length > 0 then
             j <= (i * 100) / length;
