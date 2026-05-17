@@ -47,6 +47,11 @@ begin
     process(clk)
     begin
         if rising_edge(clk) then
+            if percent > 10 then
+                an <= "1011";
+            else
+                an <= "1101";
+            end if;
         end if;
     end process;
 end architecture rtl;
