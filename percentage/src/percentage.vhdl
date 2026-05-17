@@ -3,7 +3,6 @@ use ieee.std_logic_1164.all;
 
 entity percentage is
     port (
-        clk    : in  std_logic;
         length : in  integer;
         i      : in  integer;
         result : out integer

@@ -14,7 +14,6 @@ end entity controller;
 architecture rtl of controller is
     component percentage
         port (
-            clk    : in  std_logic;
             length : in  integer;
             i      : in  integer;
             result : out integer
@@ -34,7 +33,6 @@ architecture rtl of controller is
 begin
     module1: percentage
         port map (
-            clk    => clk,
             length => length,
             i      => i,
             result => percent
