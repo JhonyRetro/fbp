@@ -16,7 +16,7 @@ elaborate: mkdir
 	$(GHDL) -e --std=08 --workdir=$(WORKDIR) $(TB)
 
 run: analyse elaborate
-	$(GHDL) -r --std=08 --workdir=$(WORKDIR) $(TB) --vcd=$(WAVES)/$(TB).vcd
+	$(GHDL) -r --std=08 --workdir=$(WORKDIR) $(TB) --vcd=$(WAVES)/$(TB).vcd --stop-time=1000ns
 
 view: mkdir
 	$(GTKWAVE) $(WAVES)/$(TB).vcd
