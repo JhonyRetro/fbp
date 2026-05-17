@@ -10,6 +10,8 @@ entity plotter_top is
 
         sw_enable_x   : in  std_logic; -- sw[0]
         sw_enable_y   : in  std_logic; -- sw[1]
+        led_en_x      : out std_logic;
+        led_en_y      : out std_logic;
 
         step_x        : out std_logic; -- Pmod JA1
         dir_x         : out std_logic; -- Pmod JA2
@@ -54,7 +56,6 @@ architecture structural of plotter_top is
             rx_done_tick : in  std_logic;
             dx_steps     : out std_logic_vector(15 downto 0);
             dy_steps     : out std_logic_vector(15 downto 0);
-            delay_out    : out std_logic_vector(15 downto 0);
             dir_x        : out std_logic;
             dir_y        : out std_logic;
             pen_down     : out std_logic;
@@ -69,9 +70,9 @@ architecture structural of plotter_top is
             packet_ready : in  std_logic;
             dx_in        : in  std_logic_vector(15 downto 0);
             dy_in        : in  std_logic_vector(15 downto 0);
-            delay_in     : in std_logic_vector(15 downto 0);
             dir_x_in     : in  std_logic;
             dir_y_in     : in  std_logic;
+            pen_state    : in  std_logic;
             step_x       : out std_logic;
             dir_x        : out std_logic;
             step_y       : out std_logic;
@@ -87,7 +88,6 @@ architecture structural of plotter_top is
     -- Parser a Bresenham
     signal packet_rdy_w : std_logic;
     signal dx_w, dy_w   : std_logic_vector(15 downto 0);
-    signal delay_w      : std_logic_vector(15 downto 0);
     signal dir_x_w      : std_logic;
     signal dir_y_w      : std_logic;
     signal pen_down_w   : std_logic;
@@ -107,9 +107,11 @@ architecture structural of plotter_top is
 
 begin
 
-    en_x_out <= sw_enable_x;
-    en_y_out <= sw_enable_y;
-
+    en_x_out <= not sw_enable_x;
+    en_y_out <= not sw_enable_y;
+    led_en_x <= not sw_enable_x;
+    led_en_y <= not sw_enable_y;
+    
     led_done <= plot_end_w;
 
     inst_uart_tx: uart_tx
@@ -138,7 +140,6 @@ begin
         rx_done_tick => uart_tick_w,
         dx_steps     => dx_w,
         dy_steps     => dy_w,
-        delay_out    => delay_w,
         dir_x        => dir_x_w,
         dir_y        => dir_y_w,
         pen_down     => pen_down_w,
@@ -152,9 +153,9 @@ begin
         packet_ready => packet_rdy_w,
         dx_in        => dx_w,
         dy_in        => dy_w,
-        delay_in     => delay_w,
         dir_x_in     => dir_x_w,
         dir_y_in     => dir_y_w,
+        pen_state    => pen_down_w,
         step_x       => step_x,
         dir_x        => dir_x,
         step_y       => step_y,
@@ -164,6 +165,7 @@ begin
 
     process(clk)
     begin
+    
         if rising_edge(clk) then
             if pen_down_w = '1' then
                 pwm_high_time <= 200000;
