@@ -10,7 +10,7 @@ end entity dec7seg;
 
 architecture rtl of dec7seg is
 begin
-    process(all)
+    process(num)
     begin
         case num is
             when 0      => seg <= "1111110";

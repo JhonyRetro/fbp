@@ -11,7 +11,7 @@ end entity percentage;
 
 architecture rtl of percentage is
 begin
-    process(all)
+    process(length, i)
         variable j : integer;
     begin
         if length > 0 then
