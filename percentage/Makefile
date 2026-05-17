@@ -4,7 +4,7 @@ WORKDIR=sim/work
 WAVES=sim/waveform
 TB=tb
 
-all: clean build sim
+all: run
 
 analyse:
 	$(GHDL) -a --workdir=$(WORKDIR) src/*.vhdl tb/*.vhdl
