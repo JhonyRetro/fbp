@@ -10,15 +10,14 @@ entity percentage is
 end entity percentage;
 
 architecture rtl of percentage is
+    signal j : integer := 0;
 begin
-    process(length, i)
-        variable j : integer;
+    process(i)
     begin
         if length > 0 then
-            j := (i * 100) / length;
-            if j < 1 then
-                result <= 0;
-            elsif j > 99 then
+            j <= (i * 100) / length;
+
+            if j < 1 or j > 99 then
                 result <= 0;
             else
                 result <= j;
