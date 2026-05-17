@@ -10,13 +10,13 @@ mkdir:
 	mkdir -p $(WORKDIR) $(WAVES)
 
 analyse: mkdir
-	$(GHDL) -a --std=08 --workdir=$(WORKDIR) src/*.vhdl tb/*.vhdl
+	$(GHDL) -a --workdir=$(WORKDIR) src/*.vhdl tb/*.vhdl
 
 elaborate: mkdir
-	$(GHDL) -e --std=08 --workdir=$(WORKDIR) $(TB)
+	$(GHDL) -e --workdir=$(WORKDIR) $(TB)
 
 run: analyse elaborate
-	$(GHDL) -r --std=08 --workdir=$(WORKDIR) $(TB) --vcd=$(WAVES)/$(TB).vcd --stop-time=1000ns
+	$(GHDL) -r --workdir=$(WORKDIR) $(TB) --vcd=$(WAVES)/$(TB).vcd
 
 view: mkdir
 	$(GTKWAVE) $(WAVES)/$(TB).vcd
