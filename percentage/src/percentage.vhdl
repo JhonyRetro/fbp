@@ -11,10 +11,15 @@ entity percentage is
 end entity percentage;
 
 architecture rtl of percentage is
+    signal j : integer := 0;
 begin
-    result <= (i * 100) / length
-        when (length > 0)
-        and (((i * 100) / length) >= 1)
-        and (((i * 100) / length) <= 99)
+    j <= (i * 100) / length
+        when length > 0
         else 0;
+
+    result <= 0
+        when (length <= 0)
+        or (j < 1)
+        or (j > 99)
+        else j;
 end architecture rtl;
