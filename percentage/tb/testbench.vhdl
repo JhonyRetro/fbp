@@ -1,56 +1,43 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.all;
-use IEEE.NUMERIC_STD.all;
+library ieee;
+use ieee.std_logic_1164.all;
 
-entity TestBench is
-end entity TestBench;
+library work;
+use work.all;
 
-architecture Test of TestBench is
-    signal clk          : std_logic := '0';
-    signal reset        : std_logic := '0';
-    signal pulse        : std_logic := '0';
-    signal file_length  : unsigned(31 downto 0) := to_unsigned(20, 32);
+entity testbench is
+end entity testbench;
 
-    signal seg          : std_logic_vector(6 downto 0);
-    signal an           : std_logic_vector(3 downto 0);
-
-    constant clk_period : time := 10 ns;
+architecture test of testbench is
+    signal   clk    : std_logic := '0';
+    signal   length : integer := 0;
+    signal   i      : integer := 0;
+    signal   seg    : std_logic_vector(6 downto 0);
+    signal   an     : std_logic_vector(3 downto 0);
+    constant period : time := 10 ns;
 begin
-    uut: entity work.file_progress_display
+    ctl: entity work.controller
         port map (
-            clk         => clk,
-            reset       => reset,
-            pulse       => pulse,
-            file_length => file_length,
-            seg         => seg,
-            an          => an
+            clk    => clk,
+            length => length,
+            i      => i,
+            seg    => seg,
+            an     => an
         );
 
-    clk_process : process
+    clock: process
     begin
         while true loop
             clk <= '0';
-            wait for clk_period / 2;
+            wait for period;
             clk <= '1';
-            wait for clk_period / 2;
+            wait for period;
         end loop;
     end process;
 
-    stim_proc : process
+    process(clk)
     begin
-        reset <= '1';
-        wait for 100 ns;
-        reset <= '0';
-
-        for k in 0 to 20 loop
-            pulse <= '1';
-            wait for clk_period;
-            pulse <= '0';
-
-            wait for 50 ns;
-        end loop;
-
-        wait for 1 us;
-        assert false report "Simulation finished" severity failure;
+        if rising_edge(clk) then
+            i <= i + 1;
+        end if;
     end process;
-end architecture Test;
+end architecture test;
