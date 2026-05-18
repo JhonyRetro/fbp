@@ -5,11 +5,11 @@ entity testbench is
 end entity testbench;
 
 architecture test of testbench is
-    signal   clk    : std_logic := '0';
-    signal   length : integer := 100;
-    signal   i      : integer := 0;
-    signal   seg    : std_logic_vector(6 downto 0) := (others => '0');
-    signal   an     : std_logic_vector(3 downto 0) := (others => '0');
+    signal clk    : std_logic := '0';
+    signal length : integer := 100;
+    signal i      : integer := 0;
+    signal seg    : std_logic_vector(6 downto 0) := (others => '0');
+    signal an     : std_logic_vector(3 downto 0) := (others => '0');
 
     constant period : time := 10 ns;
 begin
@@ -31,7 +31,6 @@ begin
             wait for 10 ns;
         end loop;
     end process clock;
-
 
     stimulus: process(clk)
     begin
