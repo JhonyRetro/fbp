@@ -12,6 +12,7 @@ architecture test of testbench is
     signal an     : std_logic_vector(3 downto 0) := (others => '0');
 
     constant period : time := 10 ns;
+    constant max    : time := 2 us;
 begin
     uut: entity work.controller
         port map (
@@ -26,9 +27,9 @@ begin
     begin
         while true loop
             clk <= '0';
-            wait for 10 ns;
+            wait for period;
             clk <= '1';
-            wait for 10 ns;
+            wait for period;
         end loop;
     end process clock;
 
@@ -41,7 +42,7 @@ begin
 
     stop: process
     begin
-        wait for 2 us;
+        wait for max;
         assert false report "END" severity failure;
     end process stop;
 end architecture test;
